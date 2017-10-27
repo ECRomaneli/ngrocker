@@ -1,0 +1,2 @@
+server_addr: ngrok-server:4443
+inspect_addr: ngrok-client:4040
