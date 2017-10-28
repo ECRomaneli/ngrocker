@@ -1,6 +1,6 @@
 # ngrocker - The simplest way to run ngrok locally
 
-ngrocker is a docker project using docker-compose and [source code of ngrok 1.x](https://github.com/magicred7/ngrok/) to easily run the ngrok-server and ngrok-client. <br/>
+The ngrocker, is a docker project using docker-compose and [source code of ngrok 1.x](https://github.com/magicred7/ngrok/) to easily run the ngrok-server and ngrok-client. <br/>
 The images of this project together has less of **35 MB**.
 
 <strong style="color: orange">The focus of this project is the ngrok sniffer tool with locally HTTP tunnels.</strong>
@@ -11,12 +11,11 @@ The images of this project together has less of **35 MB**.
 - **Sniffer**, the focus of this project is the ngrok sniffer tool, so the updates will focus on improving it. Some improvements are already available, like requests search and colored methods and status.
 
 ## How to use
-First, you need clone this repository on your machine.
+First, you need clone this repository on your machine:
 
     git clone https://github.com/magicred7/ngrocker.git
 
-Now, go into you repository foldera and create a `.env` file. If you want, you can just clone the `.env-example` file and change the name. <br/>
-Example:
+Now, go into you repository folder and create a `.env` file. If you want, you can just clone the `.env-example` file and change the name: <br/>
 
     $ cd ngrocker
     $ mv .env-example .env
@@ -46,7 +45,7 @@ You just need create a docker network (or use one) and configure the other conta
     NGROK_TUNNEL_ADDRESS= <tunnel_address>
 
 Example:<br/>
-If you want create a [Laradock](https://github.com/laradock/laradock) Nginx's tunnel, the Laradock project, already make a network called laradock_frontend. Just use it, the hostname of the nginx (called nginx too) and the http port:
+If you want create a [Laradock](https://github.com/laradock/laradock) Nginx's tunnel, the [Laradock Project](https://github.com/laradock/laradock), already make a network called laradock_frontend. Just use it, the hostname of the nginx (called nginx too) and the http port:
 
     NGROK_HTTP_PORT=81
 
@@ -54,14 +53,14 @@ If you want create a [Laradock](https://github.com/laradock/laradock) Nginx's tu
     NGROK_TARGET_ADDRESS=nginx:80
     NGROK_TUNNEL_ADDRESS=localhost
 
-I changed the ngrok's http port to 81, because the laradock nginx are running into this port too.
+I changed the ngrok's http port to 81, because the nginx are running into this port too.
 The tunnel address can be other address configured into nginx too.
 
-Now you can access then, into your host machine with address localhost:81.
+Now you can access then, into your host machine with address `localhost:81`.
 
 ### The second way,
-is configuring the client to make a host tunnel. The configuration is the same, but where you set the hostname of the docker container, you will put the ip of your host.<br/>
-Example, if my ip is: 172.26.0.2 then:
+is configuring the client to make a host tunnel. The configuration is the same, but where you set the hostname of the docker container, you will put the IP address of your host.<br/>
+Example, if your IP is `172.26.0.2`:
 
     NGROK_HTTP_PORT=81
 
@@ -76,17 +75,17 @@ But, if you want use modified names, then use the DNS to define the server will 
     NGROK_TARGET_ADDRESS=my-resolved-name.com:80
     NGROK_TUNNEL_ADDRESS=localhost
 
-Now you can access then, into your host machine with address localhost:80.
+Now you can access then, into your host machine with address `localhost:80`.
 
 **IMPORTANT:** If you change the `.env` file, you must restart the containers for the new settings to work.
 
 ## Nginx Configured Names
 
-If you can use nginx, just set the name of website into NGROK_TUNNEL_ADDRESS:
+If you want use nginx, just set the name of website into `NGROK_TUNNEL_ADDRESS`:
 
     NGROK_TUNNEL_ADDRESS=my-local-website.com
 
-After this, access this site with the ngrok's http port, like my-local-website.com:81.
+After this, access this site with the ngrok's http port, like `my-local-website.com:81`.
 
 ## Default Ports
 - **4443**, to ngrok server;
@@ -105,8 +104,8 @@ After this, access this site with the ngrok's http port, like my-local-website.c
 
 ## Special thanks
 
-- [@mateusvtt](https://github.com/mateusvtt) For helping with docker
-- [@inconshreveable](https://github.com/inconshreveable) For sharing the code of ngrok 1.x
+- [@mateusvtt](https://github.com/mateusvtt) For helping with docker;
+- [@inconshreveable](https://github.com/inconshreveable) For sharing the code of ngrok 1.x.
 
 ## Helpful pages
 
