@@ -1,7 +1,7 @@
 # ngrocker - The simplest way to run ngrok locally
 
-A Docker project using docker-compose and [source code of ngrok 1.x](https://github.com/inconshreveable/ngrok/) to easy run the ngrok-server and ngrok-client. <br/>
-The images of this project together has less of **35 MB** and are based on Alpine.
+ngrocker is a docker project using docker-compose and [source code of ngrok 1.x](https://github.com/magicred7/ngrok/) to easily run the ngrok-server and ngrok-client. <br/>
+The images of this project together has less of **35 MB**.
 
 <strong style="color: orange">The focus of this project is the ngrok sniffer tool with locally HTTP tunnels.</strong>
 
@@ -11,9 +11,14 @@ The images of this project together has less of **35 MB** and are based on Alpin
 - **Sniffer**, the focus of this project is the ngrok sniffer tool, so the updates will focus on improving it. Some improvements are already available, like requests search and colored methods and status.
 
 ## How to use
-First, you need create a `.env` file. If you want, you can just clone the `.env-example` file and change the name. <br/>
+First, you need clone this repository on your machine.
+
+    git clone https://github.com/magicred7/ngrocker.git
+
+Now, go into you repository foldera and create a `.env` file. If you want, you can just clone the `.env-example` file and change the name. <br/>
 Example:
 
+    $ cd ngrocker
     $ mv .env-example .env
 
 Now, just run your docker-compose:
@@ -24,7 +29,7 @@ If you want run just the ngrok server, execute:
 
     $ docker-compose up -d ngrok-server
 
-Now you have the ngrok server and ngrok client (if you want), running into your machine!
+Now you have the ngrok-server and ngrok-client (if you want), running into your machine!
 
 ## Configuration
 
@@ -73,6 +78,8 @@ But, if you want use modified names, then use the DNS to define the server will 
 
 Now you can access then, into your host machine with address localhost:80.
 
+**IMPORTANT:** If you change the `.env` file, you must restart the containers for the new settings to work.
+
 ## Nginx Configured Names
 
 If you can use nginx, just set the name of website into NGROK_TUNNEL_ADDRESS:
@@ -87,20 +94,34 @@ After this, access this site with the ngrok's http port, like my-local-website.c
 - **80**, to http tunnel;
 - **4040**, to ngrok inspector;
 
+## Related
+
+- [ngrok 1.x fork](https://github.com/magicred7/ngrok) The images of this project uses this. All updates focus improvements on sniffer tool;
+- [ngrok 1.x original](https://github.com/inconshreveable/ngrok) The original repository.
+
 ## Author
 
-- Created and maintained by [Emerson C. Romaneli](https://github.com/magicred7)(@magicred7).
+- Created and maintained by [Emerson C. Romaneli](https://github.com/magicred7) (@magicred7).
 
-## Special thanks to
+## Special thanks
 
-- [@mateusvtt](https://github.com/mateusvtt) For helping me with docker
-- [@inconshreveable](https://github.com/inconshreveable) To share the code of ngrok 1.x
+- [@mateusvtt](https://github.com/mateusvtt) For helping with docker
+- [@inconshreveable](https://github.com/inconshreveable) For sharing the code of ngrok 1.x
+
+## Helpful pages
+
+- [Developer's guide to ngrok](https://github.com/magicred7/ngrok/blob/master/docs/DEVELOPMENT.md)
+- [Install Docker Compose](https://docs.docker.com/compose/install/)
+- [Docker container networking](https://docs.docker.com/engine/userguide/networking/#default-networks)
+
+## Cautions
+
+This project (ngrocker) **dont** focus security, please dont use this for this purpose.
+
+ngrok's original repository message:
+
+**DO NOT RUN THIS VERSION OF NGROK (1.X) IN PRODUCTION**. Both the client and server are known to have serious reliability issues including memory and file descriptor leaks as well as crashes. There is also no HA story as the server is a SPOF. You are advised to run 2.0 for any production quality system. 
 
 ## License
 
 [MIT License](https://github.com/laradock/laradock/blob/master/LICENSE)
-
-
-### Production Use
-
-**DO NOT RUN THIS VERSION OF NGROK (1.X) IN PRODUCTION**. Both the client and server are known to have serious reliability issues including memory and file descriptor leaks as well as crashes. There is also no HA story as the server is a SPOF. You are advised to run 2.0 for any production quality system. 
