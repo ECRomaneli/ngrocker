@@ -61,48 +61,48 @@ function config-tunnel {
     set-env "NGROK_TUNNEL_ADDRESS" $1
     set-env "NGROK_HTTP_PORT" $2
 }
-
+pwd
 function main {
     [ $# = 0 ] && configure-help
 
-    local C_OPTION=false # CONTAINER
-    local H_OPTION=false # HOST
-    local T_OPTION=false # TUNNEL ADDRESS
-    local F_OPTION=false # FORCE TUNNEL PORT
-    local P_OPTION=80    # TARGET PORT
+    local NGROK_CONTAINER=false # CONTAINER
+    local NGROK_HOST=false # HOST
+    local NGROK_TUNNEL_PORT=false # FORCE TUNNEL PORT
+    local NGROK_TARGET_PORT=80    # TARGET PORT
 
     while getopts c:h:p:t:f:s OPTION; do
 		case "${OPTION}" in
 			c) 
-                C_OPTION=$OPTARG
+                NGROK_CONTAINER=$OPTARG
                 ;;
             h) 
-                H_OPTION=$OPTARG
+                NGROK_HOST=$OPTARG
                 ;;
             p)
-                P_OPTION=$OPTARG
+                NGROK_TARGET_PORT=$OPTARG
                 ;;
             t) 
                 TUNNEL_ADDRESS=$OPTARG
                 ;;
             f)
-                F_OPTION=$OPTARG
+                NGROK_TUNNEL_PORT=$OPTARG
                 ;;
             s) 
                 mkdir -p $BIN_PATH
-                ln -s $ORIGINAL_SCRIPT $SYMBOLIC_SCRIPT
+		local script_path=$(pwd)
+                echo -e "cd ${script_path}\n./ngrocker" > $SYMBOLIC_SCRIPT
                 exit 0
                 ;;
 			*) configure-help
 		esac
 	done
 
-    [ $C_OPTION != false ] && config-container $C_OPTION $P_OPTION    
-    [ $H_OPTION != false ] && config-host $H_OPTION $P_OPTION
+    [ $NGROK_CONTAINER != false ] && config-container $NGROK_CONTAINER $NGROK_TARGET_PORT    
+    [ $NGROK_HOST != false ] && config-host $NGROK_HOST $NGROK_TARGET_PORT
 
-    [ $P_OPTION == 80 ] && TUNNEL_PORT=$SECONDARY_HTTP_TUNNEL_PORT
+    [ $NGROK_TARGET_PORT == 80 ] && TUNNEL_PORT=$SECONDARY_HTTP_TUNNEL_PORT
 
-    [ $F_OPTION != false ] && TUNNEL_PORT=$F_OPTION
+    [ $NGROK_TUNNEL_PORT != false ] && TUNNEL_PORT=$NGROK_TUNNEL_PORT
 
     config-tunnel $TUNNEL_ADDRESS $TUNNEL_PORT
 
