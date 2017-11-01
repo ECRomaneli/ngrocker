@@ -73,7 +73,7 @@ function main {
     local NGROK_TARGET_ADDRESS=false
     local NGROK_TARGET_PORT=80
 
-    while getopts c:h:t:n:i:s:l OPTION; do
+    while getopts c:h:t:n:d:i:s:l OPTION; do
 		case $OPTION in
 			c) 
                 IS_CONTAINER=true
@@ -126,7 +126,7 @@ function main {
                 chmod +x $SYMBOLIC_SCRIPT
                 exit 1
                 ;;
-            *) echo "$OPTION - $OPTARG"
+            *) exit -1
 		esac
 	done
 
@@ -138,13 +138,14 @@ function main {
     config-tunnel $NGROK_TUNNEL_ADDRESS $NGROK_TUNNEL_PORT
 
     docker-compose up -d
+    
     echo
     echo
     println $C_YELLOW "Tunnel Address:"
-    println $C_GREEN "\t$NGROK_TUNNEL_ADDRESS:$NGROK_TUNNEL_PORT"
+    println $C_GREEN "\thttp://$NGROK_TUNNEL_ADDRESS:$NGROK_TUNNEL_PORT/"
     echo
     println $C_YELLOW "Inspector Address:"
-    println $C_GREEN "\t$NGROK_TUNNEL_ADDRESS:$NGROK_INSPECTOR_PORT"
+    println $C_GREEN "\thttp://$NGROK_TUNNEL_ADDRESS:$NGROK_INSPECTOR_PORT/"
     echo
     echo
 }
