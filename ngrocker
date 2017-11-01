@@ -28,8 +28,34 @@ function set-env {
     sed -i "s|$1=[^\n]*|$1=$2|g" $ENV_FILE
 }
 
+function ascii-art {
+    echo -e "${C_CYAN}
+                                           __
+         ____    ___________  ____   ____ |  | __ ___________ 
+        /    \  / ___\_  __ \/  _ \_/ ___\|  |/ // __ \_  __ \\
+        |   | \/ /_/  >  | \(  <_> )  \___|    <|  ___/|  | \/
+        |___| /\___  /|__|   \____/ \___  >__|_ \\\\\\\\___  >__|   
+            \/ /____/                   \/     \/    \/    ${C_NULL}";
+echo
+}
+
 function configure-help {
-    echo "NOTHING"
+    ascii-art
+    echo -e ""
+	echo -e "${C_YELLOW}Usage: \n${C_NULL}  ngrocker [[-c <address> | -h <address>] [-t <address> | -n <network> | -d <dns> | -i <port>] | -s | -l]\n"
+	echo -e "${C_YELLOW}Options: ${C_NULL}"
+	echo -e "   ${C_GREEN}-c ${C_YELLOW}<address>[:<port>]${C_NULL}\t Sets the target container name."
+    echo -e "   ${C_GREEN}-h ${C_YELLOW}<address>[:<port>]${C_NULL}\t Sets the target address."
+    echo -e "   ${C_GREEN}-t ${C_YELLOW}<address>[:<port>]${C_NULL}\t (Optional) Sets the tunnel address."
+    echo -e "   ${C_GREEN}-n ${C_YELLOW}<network>${C_NULL}\t\t\t (Optional) Sets the network name used by containers."
+    echo -e "   ${C_GREEN}-i ${C_YELLOW}<port>${C_NULL}\t\t\t (Optional) Sets the inspector port."
+    echo -e "   ${C_GREEN}-l ${C_NULL}\t\t\t\t (Optional) Sets the ngrocker command from any location."
+    echo
+    echo -e "${C_YELLOW}Examples: ${C_NULL}"
+    echo -e "   ${C_GREEN}ngrocker -l${C_NULL}\t\t\t Create shortcut of the ngrocker on your system."
+    echo -e "   ${C_GREEN}ngrocker -c golang${C_NULL}\t\t Create a tunnel of the golang container into http://localhost/."
+    echo -e "   ${C_GREEN}ngrocker -h localhost:8080${C_NULL}\t Create a tunnel of the address into http://localhost/."
+    echo
     exit -1
 }
 
