@@ -1,0 +1,152 @@
+#!/bin/bash
+
+ENV_FILE=".env"
+BIN_PATH=$(cd ~ && pwd)/bin/
+ORIGINAL_SCRIPT=$(pwd)/ngrocker.sh
+SYMBOLIC_SCRIPT=$BIN_PATH/ngrocker
+
+NGROK_NETWORK_NAME=ngrok-client
+NGROK_NETWORK_DNS=
+NGROK_INSPECTOR_PORT=4040
+
+DEFAULT_TUNNEL_ADDRESS="localhost"
+
+C_GREEN='\033[32m'
+C_YELLOW='\033[33m'
+C_RED='\033[31m'
+C_CYAN='\033[36m'
+C_NULL='\033[0m'
+
+function println
+{
+	local COLOR=$1
+	local TEXT=${@:2}
+	echo -e "${COLOR}${TEXT}${C_NULL}"
+}
+
+function set-env {
+    sed -i "s|$1=[^\n]*|$1=$2|g" $ENV_FILE
+}
+
+function configure-help {
+    echo "NOTHING"
+    exit -1
+}
+
+function get-ip {
+    host $1 | awk '/has address/ { print $4 }'
+}
+
+function config-host {
+    ip=$(get-ip $1)
+    [ ! $ip ] && ip=$1
+    set-env "NGROK_TARGET_ADDRESS" $ip:$2
+}
+
+function config-container {
+    docker network create $NGROK_NETWORK_NAME
+    docker network connect $NGROK_NETWORK_NAME $1
+    set-env "NGROK_TARGET_ADDRESS" "$1:$2"
+    set-env "NGROK_NETWORK_NAME" $NGROK_NETWORK_NAME
+}
+
+function config-tunnel {
+    set-env "NGROK_TUNNEL_ADDRESS" $1
+    set-env "NGROK_HTTP_PORT" $2
+    set-env "NGROK_INSPECTOR_PORT" $NGROK_INSPECTOR_PORT
+}
+
+function clear-network {
+    set-env "NGROK_NETWORK_DNS" ""
+    set-env "NGROK_NETWORK_NAME" ""
+}
+
+function main {
+    [ $# = 0 ] && configure-help
+
+    local IS_CONTAINER=false
+    local IS_HOST=false
+
+    local NGROK_TUNNEL_ADDRESS=$DEFAULT_TUNNEL_ADDRESS
+    local NGROK_TUNNEL_PORT=80
+
+    local NGROK_TARGET_ADDRESS=false
+    local NGROK_TARGET_PORT=80
+
+    while getopts c:h:t:n:i:s:l OPTION; do
+		case $OPTION in
+			c) 
+                IS_CONTAINER=true
+                local TARGET_URL=(${OPTARG//:/\ })
+                NGROK_TARGET_ADDRESS=${TARGET_URL[0]}
+                if [ ${#TARGET_URL[@]} == 2 ]; then
+                    NGROK_TARGET_PORT=${TARGET_URL[1]}
+                else
+                    NGROK_TARGET_PORT=80
+                fi
+                ;;
+            h) 
+                IS_HOST=true
+                local TARGET_URL=(${OPTARG//:/\ })
+                NGROK_TARGET_ADDRESS=${TARGET_URL[0]}
+                if [ ${#TARGET_URL[@]} == 2 ]; then
+                    NGROK_TARGET_PORT=${TARGET_URL[1]}
+                else
+                    NGROK_TARGET_PORT=80
+                fi
+                ;;
+            t)
+                local TUNNEL_URL=(${OPTARG//:/\ })
+                NGROK_TUNNEL_ADDRESS=${TUNNEL_URL[0]}
+                NGROK_TUNNEL_PORT=${TUNNEL_URL[1]}
+                if [ ${#TUNNEL_URL[@]} == 2 ]; then
+                    NGROK_TUNNEL_PORT=${TUNNEL_URL[1]}
+                else
+                    NGROK_TUNNEL_PORT=80
+                fi
+                ;;
+            n)
+                NGROK_NETWORK_NAME=$OPTARG
+                ;;
+            d)
+                NGROK_NETWORK_DNS=$OPTARG
+                ;;
+            i)
+                NGROK_INSPECTOR_PORT=$OPTARG
+                ;;
+            s)
+                docker-compose down
+                exit 0;
+                ;;
+            l) 
+                local script_path=$(pwd)
+                mkdir -p $BIN_PATH
+                rm -f $SYMBOLIC_SCRIPT
+                echo "cd ${script_path} && ./ngrocker \$*" > $SYMBOLIC_SCRIPT
+                chmod +x $SYMBOLIC_SCRIPT
+                exit 1
+                ;;
+            *) echo "$OPTION - $OPTARG"
+		esac
+	done
+
+    clear-network
+
+    $IS_CONTAINER && config-container $NGROK_TARGET_ADDRESS $NGROK_TARGET_PORT    
+    $IS_HOST      && config-host      $NGROK_TARGET_ADDRESS $NGROK_TARGET_PORT
+
+    config-tunnel $NGROK_TUNNEL_ADDRESS $NGROK_TUNNEL_PORT
+
+    docker-compose up -d
+    echo
+    echo
+    println $C_YELLOW "Tunnel Address:"
+    println $C_GREEN "\t$NGROK_TUNNEL_ADDRESS:$NGROK_TUNNEL_PORT"
+    echo
+    println $C_YELLOW "Inspector Address:"
+    println $C_GREEN "\t$NGROK_TUNNEL_ADDRESS:$NGROK_INSPECTOR_PORT"
+    echo
+    echo
+}
+
+main $*
