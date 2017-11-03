@@ -1,7 +1,5 @@
 # ngrocker - The simplest way to run ngrok locally
 
-[TESTED ON LINUX]
-
 The ngrocker, is a docker project using docker-compose and [source code of ngrok 1.x](https://github.com/magicred7/ngrok/) to easily run the ngrok-server and ngrok-client. <br/>
 The images of this project together has less of **35 MB**.
 
@@ -15,10 +13,12 @@ The images of this project together has less of **35 MB**.
 # How to use
 
 ### To start ngrocker, you can:
-- [Use script to easily configure and up the containers,](#using-script-&uarr;) or
-- [Configure `.env` file and use docker-compose to run](#using-docker-compose-&uarr;).
+- [Use script to easily configure and up the containers,](#using-script-) or
+- [Configure `.env` file and use docker-compose to run](#using-docker-compose-).
 
 ## Using script [&uarr;](#how-to-use)
+
+This script has been tested only on Ubuntu 16.04 LTS, but your code not have any ubuntu exclusive code.
 
 First, you need clone this repository, access your folder and execute the script:
 
@@ -32,7 +32,7 @@ The script will show all available commands. To link the ngrocker into your syst
 
 Now you can run `ngrocker` from anywhere. See the `help` of the script for more information.
 
-**This script is an automation of ["Using docker-compose"](#using-docker-compose-&uarr;). I recommend you read it to better understand its operation.**
+**This script is an automation of ["Using docker-compose"](#using-docker-compose-). I recommend you read it to better understand its operation.**
 
 ## Script usage
 
@@ -76,10 +76,10 @@ Now you have the ngrok-server and ngrok-client (if you want), running into your 
 
 ## Configuration
 
-Exists two ways to use the ngrocker.
+There are two ways to use the ngrocker.
 
 ### The first way,
-is making a tunnel of other container. To make this, you need define a docker network (or using a pre-defined network) and use the container hostname or your ip, to make an internal tunnel. After this, the defined http port going show the container content. The tunnel will be working.<br/>
+is making a tunnel of other container. To make this, you need to define a docker network (or using a pre-defined network) and use the container hostname or your ip, to make an internal tunnel. After that, the defined http port is going to show the container content. The tunnel will be working.<br/>
 
 ### Very difficult? No!<br/>
 You just need create a docker network (or use one) and configure the other container to use them. On the ngrok, you just modify your .env file like this:
@@ -137,7 +137,7 @@ After this, access this site with the ngrok's http port, like `my-local-website.
 - **80**, to http tunnel;
 - **4040**, to ngrok inspector;
 
-# Info [&uarr;](#how-to-use)
+# Details [&uarr;](#how-to-use)
 
 ## Author
 
