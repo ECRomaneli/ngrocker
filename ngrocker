@@ -105,6 +105,13 @@ function create-link {
     exit 1
 }
 
+function check-docker-compose {
+    if ! which docker-compose > /dev/null; then
+        sudo curl -o /usr/local/bin/docker-compose -L "https://github.com/docker/compose/releases/download/1.15.0/docker-compose-$(uname -s)-$(uname -m)"
+        sudo chmod +x /usr/local/bin/docker-compose
+    fi
+}
+
 function main {
     [ $# = 0 ] && configure-help
 
@@ -146,9 +153,11 @@ function main {
                 NGROK_INSPECTOR_PORT=$OPTARG
                 ;;
             s)
+                check-docker-compose
                 docker-compose down; exit 0
                 ;;
             l) 
+                check-docker-compose
                 create-link
                 ;;
             *) configure-help
@@ -163,6 +172,7 @@ function main {
 
     config-tunnel $NGROK_TUNNEL_ADDRESS $NGROK_TUNNEL_PORT
 
+    check-docker-compose
     docker-compose up -d
     
     echo
