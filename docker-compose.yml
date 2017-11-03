@@ -26,8 +26,6 @@ services:
     dns: ${NGROK_NETWORK_DNS}
     ports:
       - ${NGROK_INSPECTOR_PORT}:4040
-    depends_on:
-      - ngrok-server
     networks:
       - ngrok-server
       - ngrok-external
