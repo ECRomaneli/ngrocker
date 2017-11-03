@@ -107,8 +107,8 @@ function create-link {
 
 function check-docker-compose {
     if ! which docker-compose > /dev/null; then
-        sudo curl -o /usr/local/bin/docker-compose -L "https://github.com/docker/compose/releases/download/1.15.0/docker-compose-$(uname -s)-$(uname -m)"
-        sudo chmod +x /usr/local/bin/docker-compose
+        curl -o $BIN_PATH/docker-compose -L "https://github.com/docker/compose/releases/download/1.15.0/docker-compose-$(uname -s)-$(uname -m)"
+        chmod +x $BIN_PATH/docker-compose
     fi
 }
 
