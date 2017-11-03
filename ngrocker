@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ENV_FILE=".env"
+ENV_FILE='.env'
 BIN_PATH=$(cd ~ && pwd)/bin/
 ORIGINAL_SCRIPT=$(pwd)/ngrocker.sh
 SYMBOLIC_SCRIPT=$BIN_PATH/ngrocker
@@ -9,7 +9,10 @@ NGROK_NETWORK_NAME=ngrok-client
 NGROK_NETWORK_DNS=
 NGROK_INSPECTOR_PORT=4040
 
-DEFAULT_TUNNEL_ADDRESS="localhost"
+DEFAULT_TARGET_PORT=80
+
+DEFAULT_TUNNEL_ADDRESS=localhost
+DEFAULT_TUNNEL_PORT=80
 
 C_GREEN='\033[32m'
 C_YELLOW='\033[33m'
@@ -42,14 +45,16 @@ echo
 function configure-help {
     ascii-art
     echo -e ""
-	echo -e "${C_YELLOW}Usage: \n${C_NULL}  ngrocker [[-c <address> | -h <address>] [-t <address> | -n <network> | -d <dns> | -i <port>] | -s | -l]\n"
+	echo -e "${C_YELLOW}Usage: ${C_NULL}"
+    echo -e "  ngrocker [-c address | -h address] [-t address] [-n network] [-i port] | [-l]"
+    echo
 	echo -e "${C_YELLOW}Options: ${C_NULL}"
-	echo -e "   ${C_GREEN}-c ${C_YELLOW}<address>[:<port>]${C_NULL}\t Sets the target container name."
-    echo -e "   ${C_GREEN}-h ${C_YELLOW}<address>[:<port>]${C_NULL}\t Sets the target address."
-    echo -e "   ${C_GREEN}-t ${C_YELLOW}<address>[:<port>]${C_NULL}\t (Optional) Sets the tunnel address."
-    echo -e "   ${C_GREEN}-n ${C_YELLOW}<network>${C_NULL}\t\t\t (Optional) Sets the network name used by containers."
-    echo -e "   ${C_GREEN}-i ${C_YELLOW}<port>${C_NULL}\t\t\t (Optional) Sets the inspector port."
-    echo -e "   ${C_GREEN}-l ${C_NULL}\t\t\t\t (Optional) Sets the ngrocker command from any location."
+	echo -e "   ${C_GREEN}-c ${C_YELLOW}address[:port]${C_NULL}\t Sets the target container name."
+    echo -e "   ${C_GREEN}-h ${C_YELLOW}address[:port]${C_NULL}\t Sets the target address."
+    echo -e "   ${C_GREEN}-t ${C_YELLOW}address[:port]${C_NULL}\t (Optional) Sets the tunnel address."
+    echo -e "   ${C_GREEN}-n ${C_YELLOW}network${C_NULL}\t\t (Optional) Sets the network name used by containers."
+    echo -e "   ${C_GREEN}-i ${C_YELLOW}port${C_NULL}\t\t (Optional) Sets the inspector port."
+    echo -e "   ${C_GREEN}-l ${C_NULL}\t\t\t (Optional) Sets the ngrocker command from any location."
     echo
     echo -e "${C_YELLOW}Examples: ${C_NULL}"
     echo -e "   ${C_GREEN}ngrocker -l${C_NULL}\t\t\t Create shortcut of the ngrocker on your system."
@@ -87,6 +92,19 @@ function clear-network {
     set-env "NGROK_NETWORK_NAME" ""
 }
 
+function create-link {
+    local script_path=$(pwd)
+    mkdir -p $BIN_PATH
+    rm -f $SYMBOLIC_SCRIPT
+    echo "cd ${script_path} && ./ngrocker \$*" > $SYMBOLIC_SCRIPT
+    chmod +x $SYMBOLIC_SCRIPT
+    echo
+    println $C_CYAN "Now you can type $C_YELLOW ngrocker $C_CYAN from anywhere."
+    println $C_GREEN "If you change the path of this script, please execute this command again."
+    echo
+    exit 1
+}
+
 function main {
     [ $# = 0 ] && configure-help
 
@@ -103,33 +121,20 @@ function main {
 		case $OPTION in
 			c) 
                 IS_CONTAINER=true
-                local TARGET_URL=(${OPTARG//:/\ })
+                local TARGET_URL=(${OPTARG//:/\ } $DEFAULT_TARGET_PORT)
                 NGROK_TARGET_ADDRESS=${TARGET_URL[0]}
-                if [ ${#TARGET_URL[@]} == 2 ]; then
-                    NGROK_TARGET_PORT=${TARGET_URL[1]}
-                else
-                    NGROK_TARGET_PORT=80
-                fi
+                NGROK_TARGET_PORT=${TARGET_URL[1]}
                 ;;
             h) 
                 IS_HOST=true
-                local TARGET_URL=(${OPTARG//:/\ })
+                local TARGET_URL=(${OPTARG//:/\ } $DEFAULT_TARGET_PORT)
                 NGROK_TARGET_ADDRESS=${TARGET_URL[0]}
-                if [ ${#TARGET_URL[@]} == 2 ]; then
-                    NGROK_TARGET_PORT=${TARGET_URL[1]}
-                else
-                    NGROK_TARGET_PORT=80
-                fi
+                NGROK_TARGET_PORT=${TARGET_URL[1]}
                 ;;
             t)
-                local TUNNEL_URL=(${OPTARG//:/\ })
+                local TUNNEL_URL=(${OPTARG//:/\ } $DEFAULT_TUNNEL_PORT)
                 NGROK_TUNNEL_ADDRESS=${TUNNEL_URL[0]}
                 NGROK_TUNNEL_PORT=${TUNNEL_URL[1]}
-                if [ ${#TUNNEL_URL[@]} == 2 ]; then
-                    NGROK_TUNNEL_PORT=${TUNNEL_URL[1]}
-                else
-                    NGROK_TUNNEL_PORT=80
-                fi
                 ;;
             n)
                 NGROK_NETWORK_NAME=$OPTARG
@@ -141,21 +146,16 @@ function main {
                 NGROK_INSPECTOR_PORT=$OPTARG
                 ;;
             s)
-                docker-compose down
-                exit 0;
+                docker-compose down; exit 0
                 ;;
             l) 
-                local script_path=$(pwd)
-                mkdir -p $BIN_PATH
-                rm -f $SYMBOLIC_SCRIPT
-                echo "cd ${script_path} && ./ngrocker \$*" > $SYMBOLIC_SCRIPT
-                chmod +x $SYMBOLIC_SCRIPT
-                exit 1
+                create-link
                 ;;
-            *) exit -1
+            *) configure-help
 		esac
 	done
 
+    [ ! -f .env ] && cp env-example .env
     clear-network
 
     $IS_CONTAINER && config-container $NGROK_TARGET_ADDRESS $NGROK_TARGET_PORT    
