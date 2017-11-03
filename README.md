@@ -18,6 +18,8 @@ The images of this project together has less of **35 MB**.
 
 ## Using script [&uarr;](#how-to-use)
 
+This script has been tested only on Ubuntu 16.04 LTS, but your code not have any ubuntu exclusive code.
+
 First, you need clone this repository, access your folder and execute the script:
 
     $ git clone https://github.com/magicred7/ngrocker.git
@@ -135,7 +137,7 @@ After this, access this site with the ngrok's http port, like `my-local-website.
 - **80**, to http tunnel;
 - **4040**, to ngrok inspector;
 
-# Info [&uarr;](#how-to-use)
+# Details [&uarr;](#how-to-use)
 
 ## Author
 
