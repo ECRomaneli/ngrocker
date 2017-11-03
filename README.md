@@ -1,5 +1,7 @@
 # ngrocker - The simplest way to run ngrok locally
 
+[TESTED ON LINUX]
+
 The ngrocker, is a docker project using docker-compose and [source code of ngrok 1.x](https://github.com/magicred7/ngrok/) to easily run the ngrok-server and ngrok-client. <br/>
 The images of this project together has less of **35 MB**.
 
@@ -10,17 +12,59 @@ The images of this project together has less of **35 MB**.
 - **Simple**, this project was made to be easy as the original ngrok server;
 - **Sniffer**, the focus of this project is the ngrok sniffer tool, so the updates will focus on improving it. Some improvements are already available, like requests search and colored methods and status.
 
-## How to use
-First, you need clone this repository on your machine:
+# How to use
 
-    git clone https://github.com/magicred7/ngrocker.git
+### To start ngrocker, you can:
+- [Use script to easily configure and up the containers,](#using-script-&uarr;) or
+- [Configure `.env` file and use docker-compose to run](#using-docker-compose-&uarr;).
 
-Now, go into you repository folder and create a `.env` file. If you want, you can just clone the `.env-example` file and change the name: <br/>
+## Using script [&uarr;](#how-to-use)
 
+First, you need clone this repository, access your folder and execute the script:
+
+    $ git clone https://github.com/magicred7/ngrocker.git
     $ cd ngrocker
-    $ mv .env-example .env
+    $ ./ngrocker
 
-Now, just run your docker-compose:
+The script will show all available commands. To link the ngrocker into your system, run:
+
+    $ ./ngrocker -l
+
+Now you can run `ngrocker` from anywhere. See the `help` of the script for more information.
+
+**This script is an automation of ["Using docker-compose"](#using-docker-compose-&uarr;). I recommend you read it to better understand its operation.**
+
+## Script usage
+
+```bash
+# To make a tunnel of the nginx running into your port 80 to localhost:81.
+$ ngrocker -h localhost:80 -t localhost:81
+
+# To make a tunnel of the nginx container to localhost:80.
+# Note if your nginx expose the port 80, if yes, you tunnel
+# has to run on another port.
+$ ngrocker -c nginx
+
+# To make a tunnel of the your website into localhost:80.
+# Your website needs to be HTTP. HTTPS not work yet.
+$ ngrocker -h your-website.com
+
+
+######### SOME EXAMPLES #########
+$ ngrocker -c laradock_nginx_1 -t my-etc-host-site.com:81
+$ ngrocker -h localhost:80 -t localhost:81 -i 82
+$ ngrocker -n laradock_frontend -c nginx -t localhost:81
+```
+
+## Using docker-compose [&uarr;](#how-to-use)
+
+Clone this repository, access your folder and create a `.env` file. If you want, you can just clone the `env-example` file and change the name:
+
+    $ git clone https://github.com/magicred7/ngrocker.git
+    $ cd ngrocker
+    $ mv env-example .env
+
+Now [configure your .env file](#configuration) and up the images with docker-compose:
 
     $ docker-compose up -d
 
@@ -87,16 +131,13 @@ If you want use nginx, just set the name of website into `NGROK_TUNNEL_ADDRESS`:
 
 After this, access this site with the ngrok's http port, like `my-local-website.com:81`.
 
-## Default Ports
+# Default Ports [&uarr;](#how-to-use)
 - **4443**, to ngrok server;
 - **443**, to https tunnel (disabled, still does not work);
 - **80**, to http tunnel;
 - **4040**, to ngrok inspector;
 
-## Related
-
-- [ngrok 1.x fork](https://github.com/magicred7/ngrok) The images of this project uses this. All updates focus improvements on sniffer tool;
-- [ngrok 1.x original](https://github.com/inconshreveable/ngrok) The original repository.
+# Info [&uarr;](#how-to-use)
 
 ## Author
 
@@ -106,6 +147,11 @@ After this, access this site with the ngrok's http port, like `my-local-website.
 
 - [@mateusvtt](https://github.com/mateusvtt) For helping with docker;
 - [@inconshreveable](https://github.com/inconshreveable) For sharing the code of ngrok 1.x.
+
+## Related
+
+- [ngrok 1.x fork](https://github.com/magicred7/ngrok) The images of this project uses this. All updates focus improvements on sniffer tool;
+- [ngrok 1.x original](https://github.com/inconshreveable/ngrok) The original repository.
 
 ## Helpful pages
 
