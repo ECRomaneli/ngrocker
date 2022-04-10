@@ -1,4 +1,4 @@
-# [DEPRECATED] ngrocker - The simplest way to run ngrok locally
+# [DEPRECATED] ngrocker
 
 The ngrocker, is a docker project using docker-compose and [source code of ngrok 1.x](https://github.com/magicred7/ngrok/) to easily run the ngrok-server and ngrok-client. <br/>
 The images of this project together has less of **35 MB**.
